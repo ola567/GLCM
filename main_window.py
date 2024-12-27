@@ -93,16 +93,41 @@ class MainWindow(object):
         self.apply_button.setFont(font)
 
         self.average_glcm_from_input = QtWidgets.QTableWidget(self.central_widget)
-        self.average_glcm_from_input.setGeometry(QtCore.QRect(50, 370, 251, 140))
+        self.average_glcm_from_input.setGeometry(QtCore.QRect(50, 370, 292, 140))
         self.average_glcm_from_input.setStyleSheet(
             "background-color: #e3e3e3;\n" "border: 1px solid #a0a0a0"
         )
-        self.average_glcm_from_input.setColumnCount(0)
-        self.average_glcm_from_input.setRowCount(0)
-        main_window.setCentralWidget(self.central_widget)
+        self.average_glcm_from_input.setColumnCount(2)
+        self.average_glcm_from_input.setHorizontalHeaderLabels(["dx", "dy"])
 
+        self.add_row_button = QtWidgets.QPushButton(self.central_widget)
+        self.add_row_button.setGeometry(QtCore.QRect(50, 520, 120, 28))
+        self.add_row_button.setText("Add")
+        self.add_row_button.clicked.connect(self.add_row)
+
+        self.remove_row_button = QtWidgets.QPushButton(self.central_widget)
+        self.remove_row_button.setGeometry(QtCore.QRect(180, 520, 160, 28))
+        self.remove_row_button.setText("Remove")
+        self.remove_row_button.clicked.connect(self.remove_selected_row)
+
+        main_window.setCentralWidget(self.central_widget)
         self.retranslateUi(main_window)
         QtCore.QMetaObject.connectSlotsByName(main_window)
+
+    def add_row(self):
+        current_row_count = self.average_glcm_from_input.rowCount()
+        self.average_glcm_from_input.insertRow(current_row_count)
+        self.average_glcm_from_input.setRowHeight(current_row_count, 28)
+        for j in range(self.average_glcm_from_input.columnCount()):
+            item = QtWidgets.QTableWidgetItem()
+            self.average_glcm_from_input.setItem(current_row_count, j, item)
+
+    def remove_selected_row(self):
+        """Removes the selected row from the table."""
+        selected_items = self.average_glcm_from_input.selectedItems()
+        if selected_items:
+            selected_row = selected_items[0].row()
+            self.average_glcm_from_input.removeRow(selected_row)
 
     def retranslateUi(self, main_window):
         _translate = QtCore.QCoreApplication.translate

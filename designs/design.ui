@@ -227,7 +227,7 @@ border: 1px solid #a0a0a0</string>
      <rect>
       <x>50</x>
       <y>370</y>
-      <width>251</width>
+      <width>292</width>
       <height>140</height>
      </rect>
     </property>
@@ -235,6 +235,39 @@ border: 1px solid #a0a0a0</string>
      <string notr="true">background-color: #e3e3e3;
 border: 1px solid #a0a0a0</string>
     </property>
+    <property name="sizeAdjustPolicy">
+     <enum>QAbstractScrollArea::AdjustToContents</enum>
+    </property>
+    <row>
+     <property name="text">
+      <string>1</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>2</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>3</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string notr="true">4</string>
+     </property>
+    </row>
+    <column>
+     <property name="text">
+      <string>dx</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>dy</string>
+     </property>
+    </column>
    </widget>
   </widget>
  </widget>
