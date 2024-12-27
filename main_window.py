@@ -87,10 +87,12 @@ class MainWindow(object):
         font = QtGui.QFont()
         font.setPointSize(8)
         self.clear_button.setFont(font)
+        self.clear_button.clicked.connect(self.clear)
 
         self.apply_button = QtWidgets.QPushButton(self.central_widget)
         self.apply_button.setGeometry(QtCore.QRect(500, 550, 90, 28))
         self.apply_button.setFont(font)
+        self.apply_button.clicked.connect(self.apply)
 
         self.average_glcm_from_input = QtWidgets.QTableWidget(self.central_widget)
         self.average_glcm_from_input.setGeometry(QtCore.QRect(50, 370, 292, 140))
@@ -148,7 +150,10 @@ class MainWindow(object):
         self.apply_button.setText(_translate("main_window", "Apply"))
 
     def clear(self):
-        pass
+        self.file_path_input.clear()
+        self.block_size_input.clear()
+        self.average_glcm_from_input.setRowCount(0)
+        self.grey_levels_input.setCurrentIndex(0)
 
     def apply(self):
         pass
