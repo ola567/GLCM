@@ -156,7 +156,23 @@ class MainWindow(object):
         self.grey_levels_input.setCurrentIndex(0)
 
     def apply(self):
-        pass
+        file_path = self.file_path_input.toPlainText()
+        grey_levels = self.grey_levels_input.currentText()
+        block_size = self.block_size_input.text()
+        table_data = []
+        for row in range(self.average_glcm_from_input.rowCount()):
+            row_data = []
+            for col in range(self.average_glcm_from_input.columnCount()):
+                item = self.average_glcm_from_input.item(row, col)
+                row_data.append(item.text() if item else "")
+            table_data.append(row_data)
+
+        print("File Path:", file_path)
+        print("Grey Levels:", grey_levels)
+        print("Block Size:", block_size)
+        print("Table Data:")
+        for row in table_data:
+            print(row)
 
     def browse(self):
         options = QtWidgets.QFileDialog.Options()
