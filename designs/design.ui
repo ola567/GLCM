@@ -222,42 +222,54 @@ border: 1px solid #a0a0a0</string>
      <string>Apply</string>
     </property>
    </widget>
-   <widget class="QTableWidget" name="average_glcm_from_input">
+   <widget class="QListView" name="average_glcm_from_list">
     <property name="geometry">
      <rect>
       <x>50</x>
       <y>370</y>
-      <width>292</width>
-      <height>140</height>
+      <width>191</width>
+      <height>131</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: #e3e3e3;
-border: 1px solid #a0a0a0</string>
+     <string notr="true">background-color: #e3e3e3;</string>
     </property>
-    <property name="sizeAdjustPolicy">
-     <enum>QAbstractScrollArea::AdjustToContents</enum>
+   </widget>
+   <widget class="QPushButton" name="add_button">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>510</y>
+      <width>90</width>
+      <height>28</height>
+     </rect>
     </property>
-    <row>
-     <property name="text">
-      <string>1</string>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string>2</string>
-     </property>
-    </row>
-    <column>
-     <property name="text">
-      <string>dx</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>dy</string>
-     </property>
-    </column>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Add</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="remove_button">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>510</y>
+      <width>90</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Remove</string>
+    </property>
    </widget>
   </widget>
  </widget>

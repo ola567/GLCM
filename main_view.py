@@ -1,7 +1,9 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+from add_direction_view import AddDirectionView
 
-class MainWindow(object):
+
+class MainView(object):
     def setup(self, main_window):
         main_window.resize(640, 600)
         self.central_widget = QtWidgets.QWidget(main_window)
@@ -51,7 +53,7 @@ class MainWindow(object):
         font = QtGui.QFont()
         font.setPointSize(8)
         self.browse_button.setFont(font)
-        self.browse_button.clicked.connect(self.browse)
+        self.browse_button.clicked.connect(self.on_browse_button_clicked)
 
         self.grey_levels_label = QtWidgets.QLabel(self.central_widget)
         self.grey_levels_label.setGeometry(QtCore.QRect(50, 180, 81, 32))
@@ -87,49 +89,40 @@ class MainWindow(object):
         font = QtGui.QFont()
         font.setPointSize(8)
         self.clear_button.setFont(font)
-        self.clear_button.clicked.connect(self.clear)
+        self.clear_button.clicked.connect(self.on_clear_button_clicked)
 
         self.apply_button = QtWidgets.QPushButton(self.central_widget)
         self.apply_button.setGeometry(QtCore.QRect(500, 550, 90, 28))
         self.apply_button.setFont(font)
-        self.apply_button.clicked.connect(self.apply)
+        self.apply_button.clicked.connect(self.on_apply_button_clicked)
 
-        self.average_glcm_from_input = QtWidgets.QTableWidget(self.central_widget)
-        self.average_glcm_from_input.setGeometry(QtCore.QRect(50, 370, 292, 140))
-        self.average_glcm_from_input.setStyleSheet(
-            "background-color: #e3e3e3;\n" "border: 1px solid #a0a0a0"
+        self.average_glcm_from_list = QtWidgets.QListView(self.central_widget)
+        self.average_glcm_from_list.setGeometry(QtCore.QRect(50, 370, 191, 131))
+        self.average_glcm_from_list.setStyleSheet("background-color: #e3e3e3;")
+        self.average_glcm_from_list.setSelectionMode(
+            QtWidgets.QAbstractItemView.MultiSelection
         )
-        self.average_glcm_from_input.setColumnCount(2)
-        self.average_glcm_from_input.setHorizontalHeaderLabels(["dx", "dy"])
+        self.list_model = QtCore.QStringListModel()
+        self.average_glcm_from_list.setModel(self.list_model)
+        self.list_data = []
 
-        self.add_row_button = QtWidgets.QPushButton(self.central_widget)
-        self.add_row_button.setGeometry(QtCore.QRect(50, 520, 120, 28))
-        self.add_row_button.setText("Add")
-        self.add_row_button.clicked.connect(self.add_row)
+        self.add_button = QtWidgets.QPushButton(self.central_widget)
+        self.add_button.setGeometry(QtCore.QRect(50, 510, 90, 28))
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.add_button.setFont(font)
+        self.add_button.clicked.connect(self.on_add_button_clicked)
 
-        self.remove_row_button = QtWidgets.QPushButton(self.central_widget)
-        self.remove_row_button.setGeometry(QtCore.QRect(180, 520, 160, 28))
-        self.remove_row_button.setText("Remove")
-        self.remove_row_button.clicked.connect(self.remove_selected_row)
+        self.remove_button = QtWidgets.QPushButton(self.central_widget)
+        self.remove_button.setGeometry(QtCore.QRect(150, 510, 90, 28))
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.remove_button.setFont(font)
+        self.remove_button.clicked.connect(self.on_remove_button_clicked)
 
         main_window.setCentralWidget(self.central_widget)
         self.retranslateUi(main_window)
         QtCore.QMetaObject.connectSlotsByName(main_window)
-
-    def add_row(self):
-        current_row_count = self.average_glcm_from_input.rowCount()
-        self.average_glcm_from_input.insertRow(current_row_count)
-        self.average_glcm_from_input.setRowHeight(current_row_count, 28)
-        for j in range(self.average_glcm_from_input.columnCount()):
-            item = QtWidgets.QTableWidgetItem()
-            self.average_glcm_from_input.setItem(current_row_count, j, item)
-
-    def remove_selected_row(self):
-        """Removes the selected row from the table."""
-        selected_items = self.average_glcm_from_input.selectedItems()
-        if selected_items:
-            selected_row = selected_items[0].row()
-            self.average_glcm_from_input.removeRow(selected_row)
 
     def retranslateUi(self, main_window):
         _translate = QtCore.QCoreApplication.translate
@@ -148,33 +141,43 @@ class MainWindow(object):
         )
         self.clear_button.setText(_translate("main_window", "Clear"))
         self.apply_button.setText(_translate("main_window", "Apply"))
+        self.add_button.setText(_translate("main_window", "Add"))
+        self.remove_button.setText(_translate("main_window", "Remove"))
 
-    def clear(self):
+    def on_add_button_clicked(self):
+        self.add_direction_view_window = QtWidgets.QMainWindow()
+        self.add_direction_view_handler = AddDirectionView()
+        self.add_direction_view_handler.setup(
+            add_direction_window=self.add_direction_view_window, parent=self
+        )
+        self.add_direction_view_window.show()
+
+    def on_remove_button_clicked(self):
+        selected_indexes = self.average_glcm_from_list.selectedIndexes()
+        if selected_indexes:
+            for index in sorted(selected_indexes, reverse=True):
+                row = index.row()
+                del self.list_data[row]
+            self.list_model.setStringList(self.list_data)
+
+    def on_clear_button_clicked(self):
         self.file_path_input.clear()
         self.block_size_input.clear()
-        self.average_glcm_from_input.setRowCount(0)
         self.grey_levels_input.setCurrentIndex(0)
+        self.list_data.clear()
+        self.list_model.setStringList(self.list_data)
 
-    def apply(self):
+    def on_apply_button_clicked(self):
         file_path = self.file_path_input.toPlainText()
         grey_levels = self.grey_levels_input.currentText()
         block_size = self.block_size_input.text()
-        table_data = []
-        for row in range(self.average_glcm_from_input.rowCount()):
-            row_data = []
-            for col in range(self.average_glcm_from_input.columnCount()):
-                item = self.average_glcm_from_input.item(row, col)
-                row_data.append(item.text() if item else "")
-            table_data.append(row_data)
-
+        list_data = self.list_model.stringList()
         print("File Path:", file_path)
         print("Grey Levels:", grey_levels)
         print("Block Size:", block_size)
-        print("Table Data:")
-        for row in table_data:
-            print(row)
+        print("List Data:", list_data)
 
-    def browse(self):
+    def on_browse_button_clicked(self):
         options = QtWidgets.QFileDialog.Options()
         file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
             None,
