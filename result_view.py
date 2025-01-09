@@ -1,5 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPixmap
 
 class ResultView(object):
     def setup(self, result_window):
@@ -119,6 +120,49 @@ class ResultView(object):
         result_window.setCentralWidget(self.centralwidget)
         self.retranslateUi(result_window)
         QtCore.QMetaObject.connectSlotsByName(result_window)
+
+        # load images
+        self.load_image_to_scroll_area(
+            scroll_area=self.average_glcm_image_area, image_path="your_image.png"
+        )
+        self.load_image_to_scroll_area(
+            scroll_area=self.block_result_image_area, image_path="your_image.png"
+        )
+
+    def load_image_to_scroll_area(self, scroll_area, image_path):
+        pixmap = QPixmap(image_path)
+        if pixmap.isNull():
+            raise Exception("Cannot load image.")
+
+        image_label = QtWidgets.QLabel(self.centralwidget)
+        image_label.setPixmap(pixmap)
+        image_label.setFixedSize(pixmap.size())
+        image_label.setAlignment(Qt.AlignCenter)
+
+        layout = QtWidgets.QVBoxLayout()
+        layout.addWidget(image_label)
+
+        scroll_area.widget().setLayout(layout)
+
+        image_label.mousePressEvent = lambda event: self.on_image_click(
+            event, pixmap.width(), pixmap.height(), image_label
+        )
+
+    def on_image_click(self, event, image_width, image_height, label):
+        x = event.pos().x()
+        y = event.pos().y()
+
+        cols = image_width // 30
+        rows = image_height // 30
+
+        col = x // 30
+        row = y // 30
+
+        square_number = row * cols + col
+
+        QtWidgets.QMessageBox.information(
+            None, "Square Clicked", f"Clicked square: {square_number}"
+        )
 
     def retranslateUi(self, result_window):
         _translate = QtCore.QCoreApplication.translate
