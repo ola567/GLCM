@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 from add_direction_view import AddDirectionView
+from result_view import ResultView
 
 
 class MainView(object):
@@ -176,6 +177,11 @@ class MainView(object):
         print("Grey Levels:", grey_levels)
         print("Block Size:", block_size)
         print("List Data:", list_data)
+
+        self.result_view_window = QtWidgets.QMainWindow()
+        self.result_view_handler = ResultView()
+        self.result_view_handler.setup(result_window=self.result_view_window)
+        self.result_view_window.show()
 
     def on_browse_button_clicked(self):
         options = QtWidgets.QFileDialog.Options()
