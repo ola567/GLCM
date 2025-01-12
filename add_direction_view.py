@@ -15,7 +15,7 @@ class AddDirectionView(object):
         self.dx_label.setFont(font)
 
         self.enter_directions_label = QtWidgets.QLabel(self.centralwidget)
-        self.enter_directions_label.setGeometry(QtCore.QRect(30, 30, 91, 16))
+        self.enter_directions_label.setGeometry(QtCore.QRect(30, 30, 121, 16))
         self.enter_directions_label.setFont(font)
 
         self.dy_label = QtWidgets.QLabel(self.centralwidget)
@@ -61,7 +61,7 @@ class AddDirectionView(object):
         )
         self.dx_label.setText(_translate("add_direction_window", "dx"))
         self.enter_directions_label.setText(
-            _translate("add_direction_window", "Enter directions")
+            _translate("add_direction_window", "Enter direction")
         )
         self.dy_label.setText(_translate("add_direction_window", "dy"))
         self.ok_button.setText(_translate("add_direction_window", "Ok"))
