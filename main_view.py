@@ -110,6 +110,7 @@ class MainView(object):
         self.list_model = QtCore.QStringListModel()
         self.average_glcm_from_list.setModel(self.list_model)
         self.list_data = []
+        self.set_default_average_glcm_list()
 
         self.add_button = QtWidgets.QPushButton(self.central_widget)
         self.add_button.setGeometry(QtCore.QRect(50, 510, 90, 28))
@@ -189,6 +190,7 @@ class MainView(object):
         self.image_dimensions_label.setText(
             f"{self.input_image_dimension_width}x{self.input_image_dimension_height}"
         )
+        self.set_default_average_glcm_list()
 
     def on_apply_button_clicked(self):
         file_path = self.file_path_input.toPlainText()
@@ -241,3 +243,10 @@ class MainView(object):
             QtWidgets.QMessageBox.critical(
                 None, "Error", f"Failed to load image: {str(e)}"
             )
+
+    def set_default_average_glcm_list(self):
+        self.list_data.append(f"dx: 1 dy: 0")
+        self.list_data.append(f"dx: 0 dy: 1")
+        self.list_data.append(f"dx: 1 dy: 1")
+        self.list_data.append(f"dx: -1 dy: 1")
+        self.list_model.setStringList(self.list_data)
