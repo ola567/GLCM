@@ -70,6 +70,13 @@ class AddDirectionView(object):
     def on_ok_button_clicked(self):
         dx = self.dx_input.text()
         dy = self.dy_input.text()
+        if not dx or not dy:
+            QtWidgets.QMessageBox.critical(
+                None,
+                "Error",
+                "Both dx and dy must be defined.",
+            )
+            return
         self.parent.list_data.append(f"dx: {dx} dy: {dy}")
         self.parent.list_model.setStringList(self.parent.list_data)
 

@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PIL import Image
 
 from add_direction_view import AddDirectionView
+from glcm_backend.glcm import Direction
 from result_view import ResultView
 
 
@@ -193,25 +194,47 @@ class MainView(object):
         self.set_default_average_glcm_list()
 
     def on_apply_button_clicked(self):
-        file_path = self.file_path_input.toPlainText()
-        grey_levels = self.grey_levels_input.currentText()
-        block_size = int(self.block_size_input.text())
-        list_data = self.list_model.stringList()
-        print("File Path:", file_path)
-        print("Grey Levels:", grey_levels)
-        print("Block Size:", block_size)
-        print("List Data:", list_data)
-
+        # validate file path input - must be set
+        if not self.file_path_input.toPlainText():
+            QtWidgets.QMessageBox.critical(
+                None,
+                "Error",
+                "Image must be selected.",
+            )
+            return
         # validate block size input
-        if int(block_size) < 0 or int(block_size) > min(
-            self.input_image_dimension_width, self.input_image_dimension_height
-        ):
+        if not self.block_size_input.text():
+            QtWidgets.QMessageBox.critical(
+                None,
+                "Error",
+                "Block size must be set.",
+            )
+            return
+        if int(self.block_size_input.text()) < 0 or int(
+            self.block_size_input.text()
+        ) > min(self.input_image_dimension_width, self.input_image_dimension_height):
             QtWidgets.QMessageBox.critical(
                 None,
                 "Error",
                 "Block size must be between 0 and the minimum from dimension of the image.",
             )
             return
+        # validate average glcm list
+        if len(self.list_model.stringList()) < 1:
+            QtWidgets.QMessageBox.critical(
+                None,
+                "Error",
+                "At least one direction must be specified.",
+            )
+            return
+        # get list elements as list[Direction]
+        self.result_directions = [
+            Direction(
+                dx=int(direction.split(" ")[1]),
+                dy=int(direction.split(" ")[3]),
+            )
+            for direction in self.list_model.stringList()
+        ]
         self.result_view_window = QtWidgets.QMainWindow()
         self.result_view_handler = ResultView()
         self.result_view_handler.setup(result_window=self.result_view_window)
