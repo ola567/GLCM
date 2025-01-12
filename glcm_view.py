@@ -27,5 +27,5 @@ class GLCMView(object):
 
     def retranslateUi(self, glcm_window):
         _translate = QtCore.QCoreApplication.translate
-        glcm_window.setWindowTitle(_translate("glcm_window", "MainWindow"))
+        glcm_window.setWindowTitle(_translate("glcm_window", "GLCM"))
         self.glcm_label.setText(_translate("glcm_window", "GLCM"))

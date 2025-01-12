@@ -135,7 +135,7 @@ class MainView(object):
 
     def retranslateUi(self, main_window):
         _translate = QtCore.QCoreApplication.translate
-        main_window.setWindowTitle(_translate("main_window", "MainWindow"))
+        main_window.setWindowTitle(_translate("main_window", "GLCM Analysis"))
         self.title.setText(_translate("main_window", "GLCM Analysis"))
         self.image_label.setText(_translate("main_window", "Image"))
         self.browse_button.setText(_translate("main_window", "Browse"))

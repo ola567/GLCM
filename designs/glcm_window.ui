@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>GLCM</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QScrollArea" name="glcm_image_area">
