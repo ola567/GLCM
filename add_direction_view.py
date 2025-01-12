@@ -57,7 +57,7 @@ class AddDirectionView(object):
     def retranslateUi(self, add_direction_window):
         _translate = QtCore.QCoreApplication.translate
         add_direction_window.setWindowTitle(
-            _translate("add_direction_window", "MainWindow")
+            _translate("add_direction_window", "Add direction")
         )
         self.dx_label.setText(_translate("add_direction_window", "dx"))
         self.enter_directions_label.setText(

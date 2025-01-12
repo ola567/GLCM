@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 
+
 class ResultView(object):
     def setup(self, result_window):
         result_window.resize(1250, 942)
@@ -166,7 +167,7 @@ class ResultView(object):
 
     def retranslateUi(self, result_window):
         _translate = QtCore.QCoreApplication.translate
-        result_window.setWindowTitle(_translate("result_window", "result_window"))
+        result_window.setWindowTitle(_translate("result_window", "Result"))
         self.title.setText(_translate("result_window", "Result"))
         self.image_stats_label.setText(_translate("result_window", "Image stats"))
         self.contrast_label.setText(_translate("result_window", "Contrast"))
