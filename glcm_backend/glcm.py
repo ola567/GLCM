@@ -35,33 +35,40 @@ class Direction:
 
 class GLCMImage:
     def __init__(self, grayscale_image: np.array, gray_levels: int, block_size: int, average_glcm_from: list[Direction]):
-        grayscale_image //= (256 // gray_levels)
-        self.grayscale_image = grayscale_image
+        self.grayscale_image = grayscale_image // (256 // gray_levels)
+        self.gray_levels = gray_levels
+        self.block_size = block_size
+        self.average_glcm_from = average_glcm_from
 
+        self.blocks_in_x = self.grayscale_image.shape[0] // block_size
+        self.blocks_in_y = self.grayscale_image.shape[1] // block_size
+
+        self.average_glcm = self._get_average_glcm(self.grayscale_image)
+        self.average_glcm2d = self.average_glcm[:, :, 0, 0]
+
+    def _get_average_glcm(self, grayscale_image):
         # Initialize the summed GLCM
         summed_glcm = None
-        for direction in average_glcm_from:
+        for direction in self.average_glcm_from:
             # Calculate angle and distance for the current direction
             angle = np.arctan2(direction.dy, direction.dx)
             distance = np.hypot(direction.dx, direction.dy)
-
             # Compute the GLCM for this direction
             glcm = graycomatrix(
-                self.grayscale_image,
+                grayscale_image,
                 distances=[int(distance)],
                 angles=[angle],
-                levels=gray_levels
+                levels=self.gray_levels
             )
-
             # Squeeze to 2D and accumulate the result
             glcm = glcm[:, :, 0, 0]
             if summed_glcm is None:
                 summed_glcm = glcm
             else:
                 summed_glcm += glcm
-
-        self.average_glcm_2d = np.rint(summed_glcm / len(average_glcm_from)).astype(np.uint32)
-        self.average_glcm = self.average_glcm_2d.reshape((gray_levels, gray_levels, 1, 1))
+        average_glcm_2d = np.rint(summed_glcm / len(self.average_glcm_from)).astype(np.uint32)
+        average_glcm = average_glcm_2d.reshape((self.gray_levels, self.gray_levels, 1, 1))
+        return average_glcm
 
     @cached_property
     def contrast(self):
@@ -82,6 +89,72 @@ class GLCMImage:
     @cached_property
     def correlation(self):
         return graycoprops(self.average_glcm, 'correlation')[0][0]
+
+    def _block_graycoprops(self, grayscale_image, prop):
+        h, w = self.blocks_in_y * self.block_size, self.blocks_in_x * self.block_size
+        result = np.zeros((h, w), dtype=float)
+        for i in range(self.blocks_in_x):
+            for j in range(self.blocks_in_y):
+                # Extract block
+                block = grayscale_image[
+                        i * self.block_size:(i + 1) * self.block_size,
+                        j * self.block_size:(j + 1) * self.block_size
+                    ]
+                # Compute GLCM for the block
+                glcm = self._get_average_glcm(block)
+                # Compute the property for the block
+                value = graycoprops(glcm, prop)[0, 0]
+                # Fill the block in the result array with the computed value
+                result[
+                    i * self.block_size:(i + 1) * self.block_size,
+                    j * self.block_size:(j + 1) * self.block_size
+                ] = value
+        return result
+
+    @cached_property
+    def contrast_block(self):
+        return self._block_graycoprops(self.grayscale_image, 'contrast')
+
+    @cached_property
+    def dissimilarity_block(self):
+        return self._block_graycoprops(self.grayscale_image, 'dissimilarity')
+
+    @cached_property
+    def homogeneity_block(self):
+        return self._block_graycoprops(self.grayscale_image, 'homogeneity')
+
+    @cached_property
+    def energy_block(self):
+        return self._block_graycoprops(self.grayscale_image, 'energy')
+
+    @cached_property
+    def correlation_block(self):
+        return self._block_graycoprops(self.grayscale_image, 'correlation')
+
+    def _normalize(self, array, min_value, max_value):
+        if max_value == min_value:  # Avoid division by zero
+            return np.zeros_like(array) if min_value == 0 else np.ones_like(array)
+        return (array - min_value) / (max_value - min_value)
+
+    @cached_property
+    def normalized_contrast_block(self):
+        return self._normalize(self.contrast_block, min_value=0.0, max_value=np.max(self.contrast_block))
+
+    @cached_property
+    def normalized_dissimilarity_block(self):
+        return self._normalize(self.dissimilarity_block, min_value=0.0, max_value=np.max(self.dissimilarity_block))
+
+    @cached_property
+    def normalized_homogeneity_block(self):
+        return self._normalize(self.homogeneity_block, min_value=0.0, max_value=1.0)
+
+    @cached_property
+    def normalized_energy_block(self):
+        return self._normalize(self.energy_block, min_value=0.0, max_value=1.0)
+
+    @cached_property
+    def normalized_correlation_block(self):
+        return self._normalize(self.correlation_block, min_value=-1.0, max_value=1.0)
 
 
 # glcm_image = GLCMImage(
