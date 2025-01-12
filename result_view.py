@@ -1,6 +1,10 @@
+import numpy as np
+from PIL import Image
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QImage
+
+from glcm_backend.glcm import load_grayscale, to_image, GLCMImage, Direction
 
 
 class ResultView(object):
@@ -131,9 +135,32 @@ class ResultView(object):
         )
 
     def load_image_to_scroll_area(self, scroll_area, image_path):
-        pixmap = QPixmap(image_path)
+        # TODO Move it somewhere else + use actual image
+        grayscale_array = load_grayscale("test.bmp")
+        glcm_image = GLCMImage(
+            grayscale_image=grayscale_array,
+            gray_levels=32,
+            block_size=30,
+            average_glcm_from=[
+                Direction(dx=1, dy=0),
+                Direction(dx=0, dy=1),
+                Direction(dx=1, dy=1),
+                Direction(dx=-1, dy=1),
+            ],
+        )
+
+        im = to_image(glcm_image.normalized_energy_block)
+        im_array = np.array(im)
+        height, width = im_array.shape
+        bytes_per_line = width
+        qimage = QImage(
+            im_array.data, width, height, bytes_per_line, QImage.Format_Grayscale8
+        )
+
+        # Convert QImage to QPixmap
+        pixmap = QPixmap.fromImage(qimage)
         if pixmap.isNull():
-            raise Exception("Cannot load image.")
+            raise Exception("Cannot convert image to QPixmap.")
 
         image_label = QtWidgets.QLabel(self.centralwidget)
         image_label.setPixmap(pixmap)
