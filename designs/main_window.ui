@@ -6,12 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
+    <width>655</width>
     <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>GLCM Analysis</string>
+  </property>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
   </property>
   <widget class="QWidget" name="central_widget">
    <widget class="QLabel" name="title">
@@ -269,6 +272,21 @@ border: 1px solid #a0a0a0</string>
     </property>
     <property name="text">
      <string>Remove</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="image_dimensions_label">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>108</y>
+      <width>171</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">text-align: right;
+color: rgba(0, 0, 0, 0.5);
+border: #ffffff</string>
     </property>
    </widget>
   </widget>
