@@ -125,11 +125,17 @@ class MainView(object):
         self.remove_button.setFont(font)
         self.remove_button.clicked.connect(self.on_remove_button_clicked)
 
+        self.input_image_dimension_width = 0
+        self.input_image_dimension_height = 0
+
         self.image_dimensions_label = QtWidgets.QLabel(self.central_widget)
         self.image_dimensions_label.setGeometry(QtCore.QRect(310, 108, 171, 22))
         self.image_dimensions_label.setStyleSheet("color: rgba(0, 0, 0, 0.5);")
         self.image_dimensions_label.setAlignment(
             QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter
+        )
+        self.image_dimensions_label.setText(
+            f"{self.input_image_dimension_width}x{self.input_image_dimension_height}"
         )
 
         main_window.setCentralWidget(self.central_widget)
@@ -178,20 +184,32 @@ class MainView(object):
         self.grey_levels_input.setCurrentIndex(0)
         self.list_data.clear()
         self.list_model.setStringList(self.list_data)
-        self.image_dimensions_label.setText("")
         self.input_image_dimension_width = 0
         self.input_image_dimension_height = 0
+        self.image_dimensions_label.setText(
+            f"{self.input_image_dimension_width}x{self.input_image_dimension_height}"
+        )
 
     def on_apply_button_clicked(self):
         file_path = self.file_path_input.toPlainText()
         grey_levels = self.grey_levels_input.currentText()
-        block_size = self.block_size_input.text()
+        block_size = int(self.block_size_input.text())
         list_data = self.list_model.stringList()
         print("File Path:", file_path)
         print("Grey Levels:", grey_levels)
         print("Block Size:", block_size)
         print("List Data:", list_data)
 
+        # validate block size input
+        if int(block_size) < 0 or int(block_size) > min(
+            self.input_image_dimension_width, self.input_image_dimension_height
+        ):
+            QtWidgets.QMessageBox.critical(
+                None,
+                "Error",
+                "Block size must be between 0 and the minimum from dimension of the image.",
+            )
+            return
         self.result_view_window = QtWidgets.QMainWindow()
         self.result_view_handler = ResultView()
         self.result_view_handler.setup(result_window=self.result_view_window)
