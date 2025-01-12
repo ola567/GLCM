@@ -27,6 +27,11 @@ def load_grayscale(image_path: str | os.PathLike):
         return im_array.astype(np.uint8)
 
 
+def to_image(normalized_array: np.array):
+    image_array = (normalized_array * 255).astype(np.uint8)
+    return Image.fromarray(image_array, mode='L')
+
+
 @dataclass
 class Direction:
     dx: int
@@ -92,7 +97,7 @@ class GLCMImage:
 
     def _block_graycoprops(self, grayscale_image, prop):
         h, w = self.blocks_in_y * self.block_size, self.blocks_in_x * self.block_size
-        result = np.zeros((h, w), dtype=float)
+        result = np.zeros((h, w), dtype=np.float32)
         for i in range(self.blocks_in_x):
             for j in range(self.blocks_in_y):
                 # Extract block
