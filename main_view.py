@@ -104,6 +104,9 @@ class MainView(object):
         self.average_glcm_from_list.setSelectionMode(
             QtWidgets.QAbstractItemView.MultiSelection
         )
+        self.average_glcm_from_list.setEditTriggers(
+            QtWidgets.QAbstractItemView.NoEditTriggers
+        )
         self.list_model = QtCore.QStringListModel()
         self.average_glcm_from_list.setModel(self.list_model)
         self.list_data = []
