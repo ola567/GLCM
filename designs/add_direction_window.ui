@@ -37,7 +37,7 @@
      <rect>
       <x>30</x>
       <y>30</y>
-      <width>91</width>
+      <width>121</width>
       <height>16</height>
      </rect>
     </property>
@@ -47,7 +47,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Enter directions</string>
+     <string>Enter direction</string>
     </property>
    </widget>
    <widget class="QLabel" name="dy_label">

@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PIL import Image
 
 from add_direction_view import AddDirectionView
 from result_view import ResultView
@@ -121,6 +122,13 @@ class MainView(object):
         self.remove_button.setFont(font)
         self.remove_button.clicked.connect(self.on_remove_button_clicked)
 
+        self.image_dimensions_label = QtWidgets.QLabel(self.central_widget)
+        self.image_dimensions_label.setGeometry(QtCore.QRect(310, 108, 171, 22))
+        self.image_dimensions_label.setStyleSheet("color: rgba(0, 0, 0, 0.5);")
+        self.image_dimensions_label.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter
+        )
+
         main_window.setCentralWidget(self.central_widget)
         self.retranslateUi(main_window)
         QtCore.QMetaObject.connectSlotsByName(main_window)
@@ -167,6 +175,9 @@ class MainView(object):
         self.grey_levels_input.setCurrentIndex(0)
         self.list_data.clear()
         self.list_model.setStringList(self.list_data)
+        self.image_dimensions_label.setText("")
+        self.input_image_dimension_width = 0
+        self.input_image_dimension_height = 0
 
     def on_apply_button_clicked(self):
         file_path = self.file_path_input.toPlainText()
@@ -189,8 +200,23 @@ class MainView(object):
             None,
             "Select File",
             "",
-            "All Files (*);;Image Files (*.png;*.jpg;*.bmp)",
+            "Image Files (*.png;*.jpg;*.bmp)",
             options=options,
         )
         if file_path:
             self.file_path_input.setPlainText(file_path)
+        self.load_image()
+
+    def load_image(self):
+        try:
+            image = Image.open(self.file_path_input.toPlainText())
+            self.input_image_dimension_width, self.input_image_dimension_height = (
+                image.size
+            )
+            self.image_dimensions_label.setText(
+                f"{self.input_image_dimension_width}x{self.input_image_dimension_height}"
+            )
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(
+                None, "Error", f"Failed to load image: {str(e)}"
+            )
