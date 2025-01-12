@@ -27,6 +27,11 @@ def load_grayscale(image_path: str | os.PathLike):
         return im_array.astype(np.uint8)
 
 
+def to_image(normalized_array):
+    image_array = (normalized_array * 255).astype(np.uint8)
+    return Image.fromarray(image_array, mode='L')
+
+
 @dataclass
 class Direction:
     dx: int
@@ -34,14 +39,14 @@ class Direction:
 
 
 class GLCMImage:
-    def __init__(self, grayscale_image: np.array, gray_levels: int, block_size: int, average_glcm_from: list[Direction]):
+    def __init__(self, grayscale_image, gray_levels: int, block_size: int, average_glcm_from: list[Direction]):
         self.grayscale_image = grayscale_image // (256 // gray_levels)
         self.gray_levels = gray_levels
         self.block_size = block_size
         self.average_glcm_from = average_glcm_from
 
-        self.blocks_in_x = self.grayscale_image.shape[0] // block_size
-        self.blocks_in_y = self.grayscale_image.shape[1] // block_size
+        self.blocks_in_x = self.grayscale_image.shape[1] // block_size
+        self.blocks_in_y = self.grayscale_image.shape[0] // block_size
 
         self.average_glcm = self._get_average_glcm(self.grayscale_image)
         self.average_glcm2d = self.average_glcm[:, :, 0, 0]
@@ -90,15 +95,24 @@ class GLCMImage:
     def correlation(self):
         return graycoprops(self.average_glcm, 'correlation')[0][0]
 
+    def average_glcm2d_for_block(self, x, y):
+        x_block = x // self.block_size
+        y_block = y // self.block_size
+        block = self.grayscale_image[
+            y_block * self.block_size:(y_block + 1) * self.block_size,
+            x_block * self.block_size:(x_block + 1) * self.block_size
+        ]
+        return self._get_average_glcm(block)[:, :, 0, 0]
+
     def _block_graycoprops(self, grayscale_image, prop):
         h, w = self.blocks_in_y * self.block_size, self.blocks_in_x * self.block_size
-        result = np.zeros((h, w), dtype=float)
+        result = np.zeros((h, w), dtype=np.float32)
         for i in range(self.blocks_in_x):
             for j in range(self.blocks_in_y):
                 # Extract block
                 block = grayscale_image[
-                        i * self.block_size:(i + 1) * self.block_size,
-                        j * self.block_size:(j + 1) * self.block_size
+                        j * self.block_size:(j + 1) * self.block_size,
+                        i * self.block_size:(i + 1) * self.block_size
                     ]
                 # Compute GLCM for the block
                 glcm = self._get_average_glcm(block)
@@ -106,8 +120,8 @@ class GLCMImage:
                 value = graycoprops(glcm, prop)[0, 0]
                 # Fill the block in the result array with the computed value
                 result[
-                    i * self.block_size:(i + 1) * self.block_size,
-                    j * self.block_size:(j + 1) * self.block_size
+                    j * self.block_size:(j + 1) * self.block_size,
+                    i * self.block_size:(i + 1) * self.block_size
                 ] = value
         return result
 
@@ -135,6 +149,14 @@ class GLCMImage:
         if max_value == min_value:  # Avoid division by zero
             return np.zeros_like(array) if min_value == 0 else np.ones_like(array)
         return (array - min_value) / (max_value - min_value)
+
+    @cached_property
+    def normalized_average_glcm2d(self):
+        return self._normalize(self.average_glcm2d, min_value=0, max_value=np.max(self.average_glcm2d))
+
+    def normalized_average_glcm2d_for_block(self, x, y):
+        average_glcm2d_for_block = self.average_glcm2d_for_block(x, y)
+        return self._normalize(average_glcm2d_for_block, min_value=0, max_value=np.max(average_glcm2d_for_block))
 
     @cached_property
     def normalized_contrast_block(self):
@@ -168,3 +190,4 @@ class GLCMImage:
 #         Direction(dx=-1, dy=1),
 #     ],
 # )
+#
