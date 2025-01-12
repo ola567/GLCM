@@ -45,8 +45,8 @@ class GLCMImage:
         self.block_size = block_size
         self.average_glcm_from = average_glcm_from
 
-        self.blocks_in_x = self.grayscale_image.shape[0] // block_size
-        self.blocks_in_y = self.grayscale_image.shape[1] // block_size
+        self.blocks_in_x = self.grayscale_image.shape[1] // block_size
+        self.blocks_in_y = self.grayscale_image.shape[0] // block_size
 
         self.average_glcm = self._get_average_glcm(self.grayscale_image)
         self.average_glcm2d = self.average_glcm[:, :, 0, 0]
@@ -102,8 +102,8 @@ class GLCMImage:
             for j in range(self.blocks_in_y):
                 # Extract block
                 block = grayscale_image[
-                        i * self.block_size:(i + 1) * self.block_size,
-                        j * self.block_size:(j + 1) * self.block_size
+                        j * self.block_size:(j + 1) * self.block_size,
+                        i * self.block_size:(i + 1) * self.block_size
                     ]
                 # Compute GLCM for the block
                 glcm = self._get_average_glcm(block)
@@ -111,8 +111,8 @@ class GLCMImage:
                 value = graycoprops(glcm, prop)[0, 0]
                 # Fill the block in the result array with the computed value
                 result[
-                    i * self.block_size:(i + 1) * self.block_size,
-                    j * self.block_size:(j + 1) * self.block_size
+                    j * self.block_size:(j + 1) * self.block_size,
+                    i * self.block_size:(i + 1) * self.block_size
                 ] = value
         return result
 
@@ -140,6 +140,10 @@ class GLCMImage:
         if max_value == min_value:  # Avoid division by zero
             return np.zeros_like(array) if min_value == 0 else np.ones_like(array)
         return (array - min_value) / (max_value - min_value)
+
+    @cached_property
+    def normalized_average_glcm2d(self):
+        return self._normalize(self.average_glcm2d, min_value=0.0, max_value=np.max(self.average_glcm2d))
 
     @cached_property
     def normalized_contrast_block(self):
@@ -173,3 +177,5 @@ class GLCMImage:
 #         Direction(dx=-1, dy=1),
 #     ],
 # )
+#
+# to_image(glcm_image.normalized_contrast_block).save("contrast_block.bmp")
