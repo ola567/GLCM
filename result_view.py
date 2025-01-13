@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QImage
 
 from glcm_backend.glcm import GLCMImage, Direction, to_image
+from glcm_view import GLCMView
 
 
 class ResultView(object):
@@ -244,17 +245,11 @@ class ResultView(object):
         x = event.pos().x()
         y = event.pos().y()
 
-        cols = image_width // 30
-        rows = image_height // 30
-
-        col = x // 30
-        row = y // 30
-
-        square_number = row * cols + col
-
-        QtWidgets.QMessageBox.information(
-            None, "Square Clicked", f"Clicked square: {square_number}"
-        )
+        im = self.glcm_image.average_glcm2d_for_block(x=x, y=y)
+        self.glcm_view_window = QtWidgets.QMainWindow()
+        self.glcm_view_handler = GLCMView()
+        self.glcm_view_handler.setup(glcm_window=self.glcm_view_window, input_image=im)
+        self.glcm_view_window.show()
 
     def retranslateUi(self, result_window):
         _translate = QtCore.QCoreApplication.translate
