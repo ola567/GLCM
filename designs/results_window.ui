@@ -119,7 +119,7 @@ border: 1px solid #a0a0a0</string>
      <string>Dissimilarity</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="homogenity_input">
+   <widget class="QLineEdit" name="homogeneity_input">
     <property name="geometry">
      <rect>
       <x>120</x>
@@ -133,12 +133,12 @@ border: 1px solid #a0a0a0</string>
 border: 1px solid #a0a0a0</string>
     </property>
    </widget>
-   <widget class="QLabel" name="homogenity_label">
+   <widget class="QLabel" name="homogeneity_label">
     <property name="geometry">
      <rect>
       <x>30</x>
       <y>175</y>
-      <width>70</width>
+      <width>91</width>
       <height>30</height>
      </rect>
     </property>
@@ -148,7 +148,7 @@ border: 1px solid #a0a0a0</string>
      </font>
     </property>
     <property name="text">
-     <string>Homogenity</string>
+     <string>Homogeneity</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="energy_input">
@@ -165,7 +165,7 @@ border: 1px solid #a0a0a0</string>
 border: 1px solid #a0a0a0</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="corelation_input">
+   <widget class="QLineEdit" name="correlation_input">
     <property name="geometry">
      <rect>
       <x>120</x>
@@ -197,7 +197,7 @@ border: 1px solid #a0a0a0</string>
      <string>Energy</string>
     </property>
    </widget>
-   <widget class="QLabel" name="corelation_label">
+   <widget class="QLabel" name="correlation_label">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -212,7 +212,7 @@ border: 1px solid #a0a0a0</string>
      </font>
     </property>
     <property name="text">
-     <string>Corelation</string>
+     <string>correlation</string>
     </property>
    </widget>
    <widget class="QScrollArea" name="average_glcm_image_area">
@@ -287,7 +287,7 @@ border: 1px solid #a0a0a0</string>
     </item>
     <item>
      <property name="text">
-      <string>Corelation</string>
+      <string>correlation</string>
      </property>
     </item>
    </widget>

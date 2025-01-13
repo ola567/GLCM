@@ -68,18 +68,18 @@ class ResultView(object):
         font.setPointSize(8)
         self.dissimilarity_label.setFont(font)
 
-        self.homogenity_input = QtWidgets.QLineEdit(self.centralwidget)
-        self.homogenity_input.setGeometry(QtCore.QRect(120, 180, 113, 22))
-        self.homogenity_input.setStyleSheet(
+        self.homogeneity_input = QtWidgets.QLineEdit(self.centralwidget)
+        self.homogeneity_input.setGeometry(QtCore.QRect(120, 180, 113, 22))
+        self.homogeneity_input.setStyleSheet(
             "background-color: #e3e3e3;\n" "border: 1px solid #a0a0a0"
         )
-        self.homogenity_input.setReadOnly(True)
+        self.homogeneity_input.setReadOnly(True)
 
-        self.homogenity_label = QtWidgets.QLabel(self.centralwidget)
-        self.homogenity_label.setGeometry(QtCore.QRect(30, 175, 70, 30))
+        self.homogeneity_label = QtWidgets.QLabel(self.centralwidget)
+        self.homogeneity_label.setGeometry(QtCore.QRect(30, 175, 70, 30))
         font = QtGui.QFont()
         font.setPointSize(8)
-        self.homogenity_label.setFont(font)
+        self.homogeneity_label.setFont(font)
 
         self.energy_input = QtWidgets.QLineEdit(self.centralwidget)
         self.energy_input.setGeometry(QtCore.QRect(120, 210, 113, 22))
@@ -88,12 +88,12 @@ class ResultView(object):
         )
         self.energy_input.setReadOnly(True)
 
-        self.corelation_input = QtWidgets.QLineEdit(self.centralwidget)
-        self.corelation_input.setGeometry(QtCore.QRect(120, 240, 113, 22))
-        self.corelation_input.setStyleSheet(
+        self.correlation_input = QtWidgets.QLineEdit(self.centralwidget)
+        self.correlation_input.setGeometry(QtCore.QRect(120, 240, 113, 22))
+        self.correlation_input.setStyleSheet(
             "background-color: #e3e3e3;\n" "border: 1px solid #a0a0a0"
         )
-        self.corelation_input.setReadOnly(True)
+        self.correlation_input.setReadOnly(True)
 
         self.energy_label = QtWidgets.QLabel(self.centralwidget)
         self.energy_label.setGeometry(QtCore.QRect(30, 205, 70, 30))
@@ -101,11 +101,11 @@ class ResultView(object):
         font.setPointSize(8)
         self.energy_label.setFont(font)
 
-        self.corelation_label = QtWidgets.QLabel(self.centralwidget)
-        self.corelation_label.setGeometry(QtCore.QRect(30, 235, 70, 30))
+        self.correlation_label = QtWidgets.QLabel(self.centralwidget)
+        self.correlation_label.setGeometry(QtCore.QRect(30, 235, 70, 30))
         font = QtGui.QFont()
         font.setPointSize(8)
-        self.corelation_label.setFont(font)
+        self.correlation_label.setFont(font)
 
         self.average_glcm_image_area = QtWidgets.QScrollArea(self.centralwidget)
         self.average_glcm_image_area.setGeometry(QtCore.QRect(30, 330, 580, 580))
@@ -155,9 +155,9 @@ class ResultView(object):
         )
         self.contrast_input.setText(str(round(self.glcm_image.contrast, 10)))
         self.dissimilarity_input.setText(str(round(self.glcm_image.dissimilarity, 10)))
-        self.homogenity_input.setText(str(round(self.glcm_image.dissimilarity, 10)))
+        self.homogeneity_input.setText(str(round(self.glcm_image.dissimilarity, 10)))
         self.energy_input.setText(str(round(self.glcm_image.energy, 10)))
-        self.corelation_input.setText(str(round(self.glcm_image.correlation, 10)))
+        self.correlation_input.setText(str(round(self.glcm_image.correlation, 10)))
 
         # load images
         self.load_image_to_scroll_area(
@@ -202,7 +202,7 @@ class ResultView(object):
             im = to_image(self.glcm_image.normalized_homogeneity_block)
         elif image_type == "Energy":
             im = to_image(self.glcm_image.normalized_energy_block)
-        elif image_type == "Corelation":
+        elif image_type == "Correlation":
             im = to_image(self.glcm_image.normalized_correlation_block)
         else:
             raise ValueError(f"Unknown image type: {image_type}")
@@ -263,9 +263,9 @@ class ResultView(object):
         self.image_stats_label.setText(_translate("result_window", "Image stats"))
         self.contrast_label.setText(_translate("result_window", "Contrast"))
         self.dissimilarity_label.setText(_translate("result_window", "Dissimilarity"))
-        self.homogenity_label.setText(_translate("result_window", "Homogenity"))
+        self.homogeneity_label.setText(_translate("result_window", "Homogeneity"))
         self.energy_label.setText(_translate("result_window", "Energy"))
-        self.corelation_label.setText(_translate("result_window", "Corelation"))
+        self.correlation_label.setText(_translate("result_window", "Correlation"))
         self.block_stats_label.setText(_translate("result_window", "Block stats"))
         self.block_options_input.setItemText(0, _translate("result_window", "Contrast"))
         self.block_options_input.setItemText(
@@ -276,7 +276,7 @@ class ResultView(object):
         )
         self.block_options_input.setItemText(3, _translate("result_window", "Energy"))
         self.block_options_input.setItemText(
-            4, _translate("result_window", "Corelation")
+            4, _translate("result_window", "Correlation")
         )
         self.averave_glcm_image_label.setText(
             _translate("result_window", "Average GLCM")
