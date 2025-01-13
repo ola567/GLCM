@@ -1,10 +1,29 @@
+import numpy as np
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QImage
+
+from glcm_backend.glcm import GLCMImage, Direction, to_image
 
 
 class ResultView(object):
-    def setup(self, result_window):
+    def setup(
+        self,
+        result_window,
+        grayscale_image,
+        gray_levels: int,
+        block_size: int,
+        average_glcm_from: [Direction],
+    ):
+        # variables
+        print(f"{gray_levels=}")
+        print(f"{block_size=}")
+        print(f"{average_glcm_from=}")
+        self.grayscale_image = grayscale_image
+        self.gray_levels = gray_levels
+        self.block_size = block_size
+        self.average_glcm_from = average_glcm_from
+
         result_window.resize(1250, 942)
         self.centralwidget = QtWidgets.QWidget(result_window)
 
@@ -34,12 +53,14 @@ class ResultView(object):
         self.contrast_input.setStyleSheet(
             "background-color: #e3e3e3;\n" "border: 1px solid #a0a0a0"
         )
+        self.contrast_input.setReadOnly(True)
 
         self.dissimilarity_input = QtWidgets.QLineEdit(self.centralwidget)
         self.dissimilarity_input.setGeometry(QtCore.QRect(120, 150, 113, 22))
         self.dissimilarity_input.setStyleSheet(
             "background-color: #e3e3e3;\n" "border: 1px solid #a0a0a0"
         )
+        self.dissimilarity_input.setReadOnly(True)
 
         self.dissimilarity_label = QtWidgets.QLabel(self.centralwidget)
         self.dissimilarity_label.setGeometry(QtCore.QRect(30, 145, 70, 30))
@@ -52,6 +73,7 @@ class ResultView(object):
         self.homogenity_input.setStyleSheet(
             "background-color: #e3e3e3;\n" "border: 1px solid #a0a0a0"
         )
+        self.homogenity_input.setReadOnly(True)
 
         self.homogenity_label = QtWidgets.QLabel(self.centralwidget)
         self.homogenity_label.setGeometry(QtCore.QRect(30, 175, 70, 30))
@@ -64,12 +86,14 @@ class ResultView(object):
         self.energy_input.setStyleSheet(
             "background-color: #e3e3e3;\n" "border: 1px solid #a0a0a0"
         )
+        self.energy_input.setReadOnly(True)
 
         self.corelation_input = QtWidgets.QLineEdit(self.centralwidget)
         self.corelation_input.setGeometry(QtCore.QRect(120, 240, 113, 22))
         self.corelation_input.setStyleSheet(
             "background-color: #e3e3e3;\n" "border: 1px solid #a0a0a0"
         )
+        self.corelation_input.setReadOnly(True)
 
         self.energy_label = QtWidgets.QLabel(self.centralwidget)
         self.energy_label.setGeometry(QtCore.QRect(30, 205, 70, 30))
@@ -122,32 +146,99 @@ class ResultView(object):
         self.retranslateUi(result_window)
         QtCore.QMetaObject.connectSlotsByName(result_window)
 
+        # calculate image stats
+        self.glcm_image = GLCMImage(
+            grayscale_image=self.grayscale_image,
+            gray_levels=self.gray_levels,
+            block_size=self.block_size,
+            average_glcm_from=self.average_glcm_from,
+        )
+        self.contrast_input.setText(str(round(self.glcm_image.contrast, 10)))
+        self.dissimilarity_input.setText(str(round(self.glcm_image.dissimilarity, 10)))
+        self.homogenity_input.setText(str(round(self.glcm_image.dissimilarity, 10)))
+        self.energy_input.setText(str(round(self.glcm_image.energy, 10)))
+        self.corelation_input.setText(str(round(self.glcm_image.correlation, 10)))
+
         # load images
         self.load_image_to_scroll_area(
-            scroll_area=self.average_glcm_image_area, image_path="your_image.png"
+            scroll_area=self.average_glcm_image_area, image_type="Average"
         )
         self.load_image_to_scroll_area(
-            scroll_area=self.block_result_image_area, image_path="your_image.png"
+            scroll_area=self.block_result_image_area,
+            image_type=self.block_options_input.currentText(),
         )
 
-    def load_image_to_scroll_area(self, scroll_area, image_path):
-        pixmap = QPixmap(image_path)
-        if pixmap.isNull():
-            raise Exception("Cannot load image.")
+        self.block_options_input.currentTextChanged.connect(
+            lambda text: self.load_image_to_scroll_area(
+                scroll_area=self.block_result_image_area,
+                image_type=text,
+            )
+        )
 
+    def load_image_to_scroll_area(self, scroll_area, image_type: str):
+        """
+        image_type can be:
+            - display average GLCM on the left side (not clickable)
+                - "Average"
+            - display stats on the right side (clickable)
+                - "Contrast", "Dissimilarity", "Homogenity", "Energy", "Correlation"
+        """
+        widget = scroll_area.widget()
+        if widget.layout() is not None:
+            while widget.layout().count():
+                child = widget.layout().takeAt(0)
+                if child.widget() is not None:
+                    child.widget().deleteLater()
+            widget.layout().deleteLater()
+
+        # Generate new image based on image_type
+        if image_type == "Average":
+            im = to_image(self.glcm_image.normalized_average_glcm2d)
+        elif image_type == "Contrast":
+            im = to_image(self.glcm_image.normalized_contrast_block)
+        elif image_type == "Dissimilarity":
+            im = to_image(self.glcm_image.normalized_dissimilarity_block)
+        elif image_type == "Homogenity":
+            im = to_image(self.glcm_image.normalized_homogeneity_block)
+        elif image_type == "Energy":
+            im = to_image(self.glcm_image.normalized_energy_block)
+        elif image_type == "Corelation":
+            im = to_image(self.glcm_image.normalized_correlation_block)
+        else:
+            raise ValueError(f"Unknown image type: {image_type}")
+
+        # Debugging: Ensure the image is valid
+        if im is None or np.array(im).size == 0:
+            raise ValueError(f"Generated image for type {image_type} is invalid.")
+
+        # Convert the image to QPixmap
+        im_array = np.array(im)
+        height, width = im_array.shape
+        bytes_per_line = width
+        qimage = QImage(
+            im_array.data, width, height, bytes_per_line, QImage.Format_Grayscale8
+        )
+        pixmap = QPixmap.fromImage(qimage)
+
+        if pixmap.isNull():
+            raise Exception("Cannot convert image to QPixmap.")
+
+        # Create a new QLabel and set the pixmap
         image_label = QtWidgets.QLabel(self.centralwidget)
         image_label.setPixmap(pixmap)
         image_label.setFixedSize(pixmap.size())
         image_label.setAlignment(Qt.AlignCenter)
 
+        # Add the label to a new layout and set it to the scroll area
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(image_label)
+        widget.setLayout(layout)
 
-        scroll_area.widget().setLayout(layout)
-
-        image_label.mousePressEvent = lambda event: self.on_image_click(
-            event, pixmap.width(), pixmap.height(), image_label
-        )
+        # Set click event for block-specific images
+        if image_type != "Average":
+            image_label.mousePressEvent = lambda event: self.on_image_click(
+                event, pixmap.width(), pixmap.height(), image_label
+            )
 
     def on_image_click(self, event, image_width, image_height, label):
         x = event.pos().x()
