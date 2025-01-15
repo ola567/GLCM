@@ -195,6 +195,17 @@ class ResultView(object):
         pixmap = QPixmap.fromImage(qimage)
         if pixmap.isNull():
             raise Exception("Cannot convert image to QPixmap.")
+
+        if image_type == "Average":
+            scroll_area_width = self.average_glcm_image_area.width()
+            scroll_area_height = self.average_glcm_image_area.height()
+            pixmap = pixmap.scaled(
+                scroll_area_width,
+                scroll_area_height,
+                Qt.KeepAspectRatio,
+                Qt.FastTransformation,
+            )
+
         label.setPixmap(pixmap)
         label.setFixedSize(pixmap.size())
 

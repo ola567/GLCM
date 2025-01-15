@@ -56,5 +56,16 @@ class GLCMView(object):
         pixmap = QPixmap.fromImage(qimage)
         if pixmap.isNull():
             raise Exception("Cannot convert image to QPixmap.")
+
+        # resize
+        scroll_area_width = self.glcm_image_area.width()
+        scroll_area_height = self.glcm_image_area.height()
+        pixmap = pixmap.scaled(
+            scroll_area_width,
+            scroll_area_height,
+            Qt.KeepAspectRatio,
+            Qt.FastTransformation,
+        )
+
         self.glcm_image_area_label.setPixmap(pixmap)
         self.glcm_image_area_label.setFixedSize(pixmap.size())
