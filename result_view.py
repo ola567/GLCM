@@ -216,7 +216,7 @@ class ResultView(object):
         x = event.pos().x()
         y = event.pos().y()
 
-        im = self.glcm_image.normalized_average_glcm2d_for_block(x=x, y=y)
+        im = to_image(self.glcm_image.normalized_average_glcm2d_for_block(x=x, y=y))
         self.glcm_view_window = QtWidgets.QMainWindow()
         self.glcm_view_handler = GLCMView()
         self.glcm_view_handler.setup(glcm_window=self.glcm_view_window, input_image=im)

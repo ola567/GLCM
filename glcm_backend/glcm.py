@@ -1,9 +1,32 @@
+import os
 from dataclasses import dataclass
 from functools import cached_property
 
 from PIL import Image
 import numpy as np
 from skimage.feature import graycomatrix, graycoprops
+
+
+from skimage.color import rgb2gray
+
+
+def load_grayscale(image_path: str | os.PathLike):
+    # Open the image file (supports JPG, PNG, BMP)
+    im_frame = Image.open(image_path)
+
+    # Convert image to numpy array
+    im_array = np.array(im_frame)
+
+    # Check the number of channels
+    if len(im_array.shape) == 3:  # If the image has color channels
+        if im_array.shape[2] == 4:  # 4 channels (e.g., RGBA)
+            # Remove the alpha channel by extracting the first three channels (RGB)
+            im_array = im_array[:, :, :3]
+        # Convert to grayscale
+        return (255 * rgb2gray(im_array)).astype(np.uint8)
+    else:
+        # If the image is already grayscale, no need to use rgb2gray
+        return im_array.astype(np.uint8)
 
 
 def to_image(normalized_array):
