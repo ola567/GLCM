@@ -2,6 +2,7 @@ import numpy as np
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QImage
+from PyQt5.QtWidgets import QLabel
 
 from glcm_backend.glcm import GLCMImage, Direction, to_image
 from glcm_view import GLCMView
@@ -32,8 +33,6 @@ class ResultView(object):
         self.title.setGeometry(QtCore.QRect(570, 20, 71, 32))
         font = QtGui.QFont()
         font.setPointSize(16)
-        font.setBold(False)
-        font.setWeight(50)
         self.title.setFont(font)
         self.title.setObjectName("title")
 
@@ -56,6 +55,12 @@ class ResultView(object):
         )
         self.contrast_input.setReadOnly(True)
 
+        self.dissimilarity_label = QtWidgets.QLabel(self.centralwidget)
+        self.dissimilarity_label.setGeometry(QtCore.QRect(30, 145, 70, 30))
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.dissimilarity_label.setFont(font)
+
         self.dissimilarity_input = QtWidgets.QLineEdit(self.centralwidget)
         self.dissimilarity_input.setGeometry(QtCore.QRect(120, 150, 113, 22))
         self.dissimilarity_input.setStyleSheet(
@@ -63,11 +68,11 @@ class ResultView(object):
         )
         self.dissimilarity_input.setReadOnly(True)
 
-        self.dissimilarity_label = QtWidgets.QLabel(self.centralwidget)
-        self.dissimilarity_label.setGeometry(QtCore.QRect(30, 145, 70, 30))
+        self.homogeneity_label = QtWidgets.QLabel(self.centralwidget)
+        self.homogeneity_label.setGeometry(QtCore.QRect(30, 175, 70, 30))
         font = QtGui.QFont()
         font.setPointSize(8)
-        self.dissimilarity_label.setFont(font)
+        self.homogeneity_label.setFont(font)
 
         self.homogeneity_input = QtWidgets.QLineEdit(self.centralwidget)
         self.homogeneity_input.setGeometry(QtCore.QRect(120, 180, 113, 22))
@@ -76,11 +81,11 @@ class ResultView(object):
         )
         self.homogeneity_input.setReadOnly(True)
 
-        self.homogeneity_label = QtWidgets.QLabel(self.centralwidget)
-        self.homogeneity_label.setGeometry(QtCore.QRect(30, 175, 70, 30))
+        self.energy_label = QtWidgets.QLabel(self.centralwidget)
+        self.energy_label.setGeometry(QtCore.QRect(30, 205, 70, 30))
         font = QtGui.QFont()
         font.setPointSize(8)
-        self.homogeneity_label.setFont(font)
+        self.energy_label.setFont(font)
 
         self.energy_input = QtWidgets.QLineEdit(self.centralwidget)
         self.energy_input.setGeometry(QtCore.QRect(120, 210, 113, 22))
@@ -89,6 +94,12 @@ class ResultView(object):
         )
         self.energy_input.setReadOnly(True)
 
+        self.correlation_label = QtWidgets.QLabel(self.centralwidget)
+        self.correlation_label.setGeometry(QtCore.QRect(30, 235, 70, 30))
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.correlation_label.setFont(font)
+
         self.correlation_input = QtWidgets.QLineEdit(self.centralwidget)
         self.correlation_input.setGeometry(QtCore.QRect(120, 240, 113, 22))
         self.correlation_input.setStyleSheet(
@@ -96,24 +107,19 @@ class ResultView(object):
         )
         self.correlation_input.setReadOnly(True)
 
-        self.energy_label = QtWidgets.QLabel(self.centralwidget)
-        self.energy_label.setGeometry(QtCore.QRect(30, 205, 70, 30))
-        font = QtGui.QFont()
-        font.setPointSize(8)
-        self.energy_label.setFont(font)
-
-        self.correlation_label = QtWidgets.QLabel(self.centralwidget)
-        self.correlation_label.setGeometry(QtCore.QRect(30, 235, 70, 30))
-        font = QtGui.QFont()
-        font.setPointSize(8)
-        self.correlation_label.setFont(font)
-
         self.average_glcm_image_area = QtWidgets.QScrollArea(self.centralwidget)
         self.average_glcm_image_area.setGeometry(QtCore.QRect(30, 330, 580, 580))
         self.average_glcm_image_area.setWidgetResizable(True)
-        self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 578, 578))
-        self.average_glcm_image_area.setWidget(self.scrollAreaWidgetContents)
+        self.average_glcm_label = QLabel()
+        self.average_glcm_label.setAlignment(Qt.AlignCenter)
+        self.average_glcm_image_area.setWidget(self.average_glcm_label)
+
+        self.averave_glcm_image_title = QtWidgets.QLabel(self.centralwidget)
+        self.averave_glcm_image_title.setGeometry(QtCore.QRect(30, 290, 111, 32))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.averave_glcm_image_title.setFont(font)
+        self.averave_glcm_image_title.setText("Average GLCM")
 
         self.block_stats_label = QtWidgets.QLabel(self.centralwidget)
         self.block_stats_label.setGeometry(QtCore.QRect(650, 250, 91, 32))
@@ -123,29 +129,19 @@ class ResultView(object):
 
         self.block_options_input = QtWidgets.QComboBox(self.centralwidget)
         self.block_options_input.setGeometry(QtCore.QRect(650, 280, 160, 28))
-        self.block_options_input.setObjectName("block_options_input")
-        self.block_options_input.addItem("")
-        self.block_options_input.addItem("")
-        self.block_options_input.addItem("")
-        self.block_options_input.addItem("")
-        self.block_options_input.addItem("")
+        self.block_options_input.addItems(
+            ["Contrast", "Dissimilarity", "Homogenity", "Energy", "Correlation"]
+        )
 
         self.block_result_image_area = QtWidgets.QScrollArea(self.centralwidget)
         self.block_result_image_area.setGeometry(QtCore.QRect(640, 330, 580, 580))
         self.block_result_image_area.setWidgetResizable(True)
-        self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 578, 578))
-        self.block_result_image_area.setWidget(self.scrollAreaWidgetContents_2)
-
-        self.averave_glcm_image_label = QtWidgets.QLabel(self.centralwidget)
-        self.averave_glcm_image_label.setGeometry(QtCore.QRect(30, 290, 111, 32))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.averave_glcm_image_label.setFont(font)
+        self.block_result_image_label = QLabel()
+        self.block_result_image_label.setAlignment(Qt.AlignCenter)
+        self.block_result_image_area.setWidget(self.block_result_image_label)
 
         result_window.setCentralWidget(self.centralwidget)
         self.retranslateUi(result_window)
-        QtCore.QMetaObject.connectSlotsByName(result_window)
 
         # calculate image stats
         self.glcm_image = GLCMImage(
@@ -156,27 +152,18 @@ class ResultView(object):
         )
         self.contrast_input.setText(str(round(self.glcm_image.contrast, 10)))
         self.dissimilarity_input.setText(str(round(self.glcm_image.dissimilarity, 10)))
-        self.homogeneity_input.setText(str(round(self.glcm_image.dissimilarity, 10)))
+        self.homogeneity_input.setText(str(round(self.glcm_image.homogeneity, 10)))
         self.energy_input.setText(str(round(self.glcm_image.energy, 10)))
         self.correlation_input.setText(str(round(self.glcm_image.correlation, 10)))
 
         # load images
-        self.load_image_to_scroll_area(
-            scroll_area=self.average_glcm_image_area, image_type="Average"
-        )
-        self.load_image_to_scroll_area(
-            scroll_area=self.block_result_image_area,
-            image_type=self.block_options_input.currentText(),
-        )
-
+        self.load_image_to_label(self.average_glcm_label, "Average")
         self.block_options_input.currentTextChanged.connect(
-            lambda text: self.load_image_to_scroll_area(
-                scroll_area=self.block_result_image_area,
-                image_type=text,
-            )
+            lambda text: self.load_image_to_label(self.block_result_image_label, text)
         )
+        self.load_image_to_label(self.block_result_image_label, "Contrast")
 
-    def load_image_to_scroll_area(self, scroll_area, image_type: str):
+    def load_image_to_label(self, label, image_type: str):
         """
         image_type can be:
             - display average GLCM on the left side (not clickable)
@@ -184,15 +171,6 @@ class ResultView(object):
             - display stats on the right side (clickable)
                 - "Contrast", "Dissimilarity", "Homogenity", "Energy", "Correlation"
         """
-        widget = scroll_area.widget()
-        if widget.layout() is not None:
-            while widget.layout().count():
-                child = widget.layout().takeAt(0)
-                if child.widget() is not None:
-                    child.widget().deleteLater()
-            widget.layout().deleteLater()
-
-        # Generate new image based on image_type
         if image_type == "Average":
             im = to_image(self.glcm_image.normalized_average_glcm2d)
         elif image_type == "Contrast":
@@ -208,11 +186,6 @@ class ResultView(object):
         else:
             raise ValueError(f"Unknown image type: {image_type}")
 
-        # Debugging: Ensure the image is valid
-        if im is None or np.array(im).size == 0:
-            raise ValueError(f"Generated image for type {image_type} is invalid.")
-
-        # Convert the image to QPixmap
         im_array = np.array(im)
         height, width = im_array.shape
         bytes_per_line = width
@@ -220,32 +193,21 @@ class ResultView(object):
             im_array.data, width, height, bytes_per_line, QImage.Format_Grayscale8
         )
         pixmap = QPixmap.fromImage(qimage)
-
         if pixmap.isNull():
             raise Exception("Cannot convert image to QPixmap.")
+        label.setPixmap(pixmap)
+        label.setFixedSize(pixmap.size())
 
-        # Create a new QLabel and set the pixmap
-        image_label = QtWidgets.QLabel(self.centralwidget)
-        image_label.setPixmap(pixmap)
-        image_label.setFixedSize(pixmap.size())
-        image_label.setAlignment(Qt.AlignCenter)
-
-        # Add the label to a new layout and set it to the scroll area
-        layout = QtWidgets.QVBoxLayout()
-        layout.addWidget(image_label)
-        widget.setLayout(layout)
-
-        # Set click event for block-specific images
         if image_type != "Average":
-            image_label.mousePressEvent = lambda event: self.on_image_click(
-                event, pixmap.width(), pixmap.height(), image_label
+            label.mousePressEvent = lambda event: self.on_image_click(
+                event, pixmap.width(), pixmap.height(), label
             )
 
     def on_image_click(self, event, image_width, image_height, label):
         x = event.pos().x()
         y = event.pos().y()
 
-        im = self.glcm_image.average_glcm2d_for_block(x=x, y=y)
+        im = self.glcm_image.normalized_average_glcm2d_for_block(x=x, y=y)
         self.glcm_view_window = QtWidgets.QMainWindow()
         self.glcm_view_handler = GLCMView()
         self.glcm_view_handler.setup(glcm_window=self.glcm_view_window, input_image=im)
@@ -262,17 +224,3 @@ class ResultView(object):
         self.energy_label.setText(_translate("result_window", "Energy"))
         self.correlation_label.setText(_translate("result_window", "Correlation"))
         self.block_stats_label.setText(_translate("result_window", "Block stats"))
-        self.block_options_input.setItemText(0, _translate("result_window", "Contrast"))
-        self.block_options_input.setItemText(
-            1, _translate("result_window", "Dissimilarity")
-        )
-        self.block_options_input.setItemText(
-            2, _translate("result_window", "Homogenity")
-        )
-        self.block_options_input.setItemText(3, _translate("result_window", "Energy"))
-        self.block_options_input.setItemText(
-            4, _translate("result_window", "Correlation")
-        )
-        self.averave_glcm_image_label.setText(
-            _translate("result_window", "Average GLCM")
-        )
