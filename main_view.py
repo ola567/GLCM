@@ -1,5 +1,7 @@
+import numpy as np
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PIL import Image
+from skimage.color import rgb2gray
 
 from add_direction_view import AddDirectionView
 from glcm_backend.glcm import Direction
@@ -228,7 +230,7 @@ class MainView(object):
             )
             return
         # get list elements as list[Direction]
-        self.result_directions = [
+        result_directions = [
             Direction(
                 dx=int(direction.split(" ")[1]),
                 dy=int(direction.split(" ")[3]),
@@ -237,7 +239,13 @@ class MainView(object):
         ]
         self.result_view_window = QtWidgets.QMainWindow()
         self.result_view_handler = ResultView()
-        self.result_view_handler.setup(result_window=self.result_view_window)
+        self.result_view_handler.setup(
+            result_window=self.result_view_window,
+            grayscale_image=self.input_image,
+            gray_levels=int(self.grey_levels_input.currentText()),
+            block_size=int(self.block_size_input.text()),
+            average_glcm_from=result_directions,
+        )
         self.result_view_window.show()
 
     def on_browse_button_clicked(self):
@@ -251,21 +259,37 @@ class MainView(object):
         )
         if file_path:
             self.file_path_input.setPlainText(file_path)
-        self.load_image()
+        self.load_grayscale()
 
-    def load_image(self):
+    def load_grayscale(self):
+        # Open the image file (supports JPG, PNG, BMP)
         try:
-            image = Image.open(self.file_path_input.toPlainText())
-            self.input_image_dimension_width, self.input_image_dimension_height = (
-                image.size
-            )
-            self.image_dimensions_label.setText(
-                f"{self.input_image_dimension_width}x{self.input_image_dimension_height}"
-            )
+            im_frame = Image.open(self.file_path_input.toPlainText())
         except Exception as e:
             QtWidgets.QMessageBox.critical(
                 None, "Error", f"Failed to load image: {str(e)}"
             )
+
+        self.input_image_dimension_width, self.input_image_dimension_height = (
+            im_frame.size
+        )
+        self.image_dimensions_label.setText(
+            f"{self.input_image_dimension_width}x{self.input_image_dimension_height}"
+        )
+
+        # Convert image to numpy array
+        im_array = np.array(im_frame)
+
+        # Check the number of channels
+        if len(im_array.shape) == 3:  # If the image has color channels
+            if im_array.shape[2] == 4:  # 4 channels (e.g., RGBA)
+                # Remove the alpha channel by extracting the first three channels (RGB)
+                im_array = im_array[:, :, :3]
+            # Convert to grayscale
+            self.input_image = (255 * rgb2gray(im_array)).astype(np.uint8)
+        else:
+            # If the image is already grayscale, no need to use rgb2gray
+            self.input_image = im_array.astype(np.uint8)
 
     def set_default_average_glcm_list(self):
         self.list_data.append(f"dx: 1 dy: 0")
