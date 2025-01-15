@@ -107,12 +107,10 @@ class ResultView(object):
         )
         self.correlation_input.setReadOnly(True)
 
-        self.average_glcm_image_area = QtWidgets.QScrollArea(self.centralwidget)
-        self.average_glcm_image_area.setGeometry(QtCore.QRect(30, 330, 580, 580))
-        self.average_glcm_image_area.setWidgetResizable(True)
-        self.average_glcm_label = QLabel()
-        self.average_glcm_label.setAlignment(Qt.AlignCenter)
-        self.average_glcm_image_area.setWidget(self.average_glcm_label)
+        # Average GLCM display without scroll
+        self.average_glcm_image_label = QLabel(self.centralwidget)
+        self.average_glcm_image_label.setGeometry(QtCore.QRect(30, 330, 580, 580))
+        self.average_glcm_image_label.setAlignment(Qt.AlignCenter)
 
         self.averave_glcm_image_title = QtWidgets.QLabel(self.centralwidget)
         self.averave_glcm_image_title.setGeometry(QtCore.QRect(30, 290, 111, 32))
@@ -156,8 +154,8 @@ class ResultView(object):
         self.energy_input.setText(str(round(self.glcm_image.energy, 10)))
         self.correlation_input.setText(str(round(self.glcm_image.correlation, 10)))
 
-        # load images
-        self.load_image_to_label(self.average_glcm_label, "Average")
+        # Load images
+        self.load_image_to_label(self.average_glcm_image_label, "Average")
         self.block_options_input.currentTextChanged.connect(
             lambda text: self.load_image_to_label(self.block_result_image_label, text)
         )
@@ -197,8 +195,8 @@ class ResultView(object):
             raise Exception("Cannot convert image to QPixmap.")
 
         if image_type == "Average":
-            scroll_area_width = self.average_glcm_image_area.width()
-            scroll_area_height = self.average_glcm_image_area.height()
+            scroll_area_width = self.average_glcm_image_label.width()
+            scroll_area_height = self.average_glcm_image_label.height()
             pixmap = pixmap.scaled(
                 scroll_area_width,
                 scroll_area_height,

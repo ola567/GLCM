@@ -14,13 +14,10 @@ class GLCMView(object):
         self.centralwidget = QtWidgets.QWidget(glcm_window)
         self.centralwidget.setObjectName("centralwidget")
 
-        # Create scroll area
-        self.glcm_image_area = QtWidgets.QScrollArea(self.centralwidget)
-        self.glcm_image_area.setGeometry(QtCore.QRect(30, 70, 580, 580))
-        self.glcm_image_area.setWidgetResizable(True)
-        self.glcm_image_area_label = QLabel()
-        self.glcm_image_area_label.setAlignment(Qt.AlignCenter)
-        self.glcm_image_area.setWidget(self.glcm_image_area_label)
+        # Label for displaying the image
+        self.glcm_image_label = QLabel(self.centralwidget)
+        self.glcm_image_label.setGeometry(QtCore.QRect(30, 70, 580, 580))
+        self.glcm_image_label.setAlignment(Qt.AlignCenter)
 
         # Label for GLCM text
         self.glcm_label = QtWidgets.QLabel(self.centralwidget)
@@ -58,14 +55,13 @@ class GLCMView(object):
             raise Exception("Cannot convert image to QPixmap.")
 
         # resize
-        scroll_area_width = self.glcm_image_area.width()
-        scroll_area_height = self.glcm_image_area.height()
+        label_width = self.glcm_image_label.width()
+        label_height = self.glcm_image_label.height()
         pixmap = pixmap.scaled(
-            scroll_area_width,
-            scroll_area_height,
+            label_width,
+            label_height,
             Qt.KeepAspectRatio,
             Qt.FastTransformation,
         )
 
-        self.glcm_image_area_label.setPixmap(pixmap)
-        self.glcm_image_area_label.setFixedSize(pixmap.size())
+        self.glcm_image_label.setPixmap(pixmap)
