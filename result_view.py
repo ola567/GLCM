@@ -118,10 +118,12 @@ class ResultView(object):
         )
 
         # Average GLCM display without scroll
-        self.average_glcm_image_label = QLabel(self.centralwidget)
-        self.average_glcm_image_label.setGeometry(QtCore.QRect(30, 380, 580, 580))
+        self.average_glcm_image_area = QtWidgets.QScrollArea(self.centralwidget)
+        self.average_glcm_image_area.setGeometry(QtCore.QRect(30, 380, 580, 580))
+        self.average_glcm_image_area.setWidgetResizable(True)
+        self.average_glcm_image_label = QLabel()
         self.average_glcm_image_label.setAlignment(Qt.AlignCenter)
-
+        self.average_glcm_image_area.setWidget(self.average_glcm_image_label)
         self.averave_glcm_image_title = QtWidgets.QLabel(self.centralwidget)
         self.averave_glcm_image_title.setGeometry(QtCore.QRect(30, 340, 201, 32))
         font = QtGui.QFont()
@@ -165,7 +167,7 @@ class ResultView(object):
         self.correlation_input.setText(str(round(self.glcm_image.correlation, 10)))
 
         # Load images
-        self.load_image_to_label(self.average_glcm_image_label, "Average")
+        self.load_image_to_label(self.average_glcm_image_label, "Gray")
         self.block_options_input.currentTextChanged.connect(
             lambda text: self.load_image_to_label(self.block_result_image_label, text)
         )
@@ -186,8 +188,8 @@ class ResultView(object):
             - display stats on the right side (clickable)
                 - "Contrast", "Dissimilarity", "Homogenity", "Energy", "Correlation"
         """
-        if image_type == "Average":
-            im = to_image(self.glcm_image.normalized_average_glcm2d)
+        if image_type == "Gray":
+            im = to_image(self.glcm_image.normalized_grayscale_image)
         elif image_type == "Contrast":
             im = to_image(self.glcm_image.normalized_contrast_block)
         elif image_type == "Dissimilarity":
@@ -211,20 +213,10 @@ class ResultView(object):
         if pixmap.isNull():
             raise Exception("Cannot convert image to QPixmap.")
 
-        if image_type == "Average":
-            scroll_area_width = self.average_glcm_image_label.width()
-            scroll_area_height = self.average_glcm_image_label.height()
-            pixmap = pixmap.scaled(
-                scroll_area_width,
-                scroll_area_height,
-                Qt.KeepAspectRatio,
-                Qt.FastTransformation,
-            )
-
         label.setPixmap(pixmap)
         label.setFixedSize(pixmap.size())
 
-        if image_type != "Average":
+        if image_type != "Gray":
             label.mousePressEvent = lambda event: self.on_image_click(
                 event, pixmap.width(), pixmap.height(), label
             )
