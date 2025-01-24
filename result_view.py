@@ -26,7 +26,7 @@ class ResultView(object):
         self.block_size = block_size
         self.average_glcm_from = average_glcm_from
 
-        result_window.resize(1250, 942)
+        result_window.resize(1250, 987)
         self.centralwidget = QtWidgets.QWidget(result_window)
 
         self.title = QtWidgets.QLabel(self.centralwidget)
@@ -107,32 +107,42 @@ class ResultView(object):
         )
         self.correlation_input.setReadOnly(True)
 
+        self.show_average_glcm_button = QtWidgets.QPushButton(self.centralwidget)
+        self.show_average_glcm_button.setGeometry(QtCore.QRect(30, 280, 201, 28))
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.show_average_glcm_button.setFont(font)
+        self.show_average_glcm_button.setObjectName("show_average_glcm_button")
+        self.show_average_glcm_button.clicked.connect(
+            self.on_show_average_glcm_button_clicked
+        )
+
         # Average GLCM display without scroll
         self.average_glcm_image_label = QLabel(self.centralwidget)
-        self.average_glcm_image_label.setGeometry(QtCore.QRect(30, 330, 580, 580))
+        self.average_glcm_image_label.setGeometry(QtCore.QRect(30, 380, 580, 580))
         self.average_glcm_image_label.setAlignment(Qt.AlignCenter)
 
         self.averave_glcm_image_title = QtWidgets.QLabel(self.centralwidget)
-        self.averave_glcm_image_title.setGeometry(QtCore.QRect(30, 290, 111, 32))
+        self.averave_glcm_image_title.setGeometry(QtCore.QRect(30, 340, 201, 32))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.averave_glcm_image_title.setFont(font)
-        self.averave_glcm_image_title.setText("Average GLCM")
+        self.averave_glcm_image_title.setText("Input image in gray scale")
 
         self.block_stats_label = QtWidgets.QLabel(self.centralwidget)
-        self.block_stats_label.setGeometry(QtCore.QRect(650, 250, 91, 32))
+        self.block_stats_label.setGeometry(QtCore.QRect(650, 300, 91, 32))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.block_stats_label.setFont(font)
 
         self.block_options_input = QtWidgets.QComboBox(self.centralwidget)
-        self.block_options_input.setGeometry(QtCore.QRect(650, 280, 160, 28))
+        self.block_options_input.setGeometry(QtCore.QRect(650, 330, 160, 28))
         self.block_options_input.addItems(
             ["Contrast", "Dissimilarity", "Homogenity", "Energy", "Correlation"]
         )
 
         self.block_result_image_area = QtWidgets.QScrollArea(self.centralwidget)
-        self.block_result_image_area.setGeometry(QtCore.QRect(640, 330, 580, 580))
+        self.block_result_image_area.setGeometry(QtCore.QRect(640, 380, 580, 580))
         self.block_result_image_area.setWidgetResizable(True)
         self.block_result_image_label = QLabel()
         self.block_result_image_label.setAlignment(Qt.AlignCenter)
@@ -160,6 +170,13 @@ class ResultView(object):
             lambda text: self.load_image_to_label(self.block_result_image_label, text)
         )
         self.load_image_to_label(self.block_result_image_label, "Contrast")
+
+    def on_show_average_glcm_button_clicked(self):
+        im = to_image(self.glcm_image.normalized_average_glcm2d)
+        self.glcm_view_window = QtWidgets.QMainWindow()
+        self.glcm_view_handler = GLCMView()
+        self.glcm_view_handler.setup(glcm_window=self.glcm_view_window, input_image=im)
+        self.glcm_view_window.show()
 
     def load_image_to_label(self, label, image_type: str):
         """
@@ -233,3 +250,6 @@ class ResultView(object):
         self.energy_label.setText(_translate("result_window", "Energy"))
         self.correlation_label.setText(_translate("result_window", "Correlation"))
         self.block_stats_label.setText(_translate("result_window", "Block stats"))
+        self.show_average_glcm_button.setText(
+            _translate("result_window", "Show average GLCM")
+        )

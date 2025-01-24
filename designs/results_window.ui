@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1250</width>
-    <height>942</height>
+    <height>987</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -219,7 +219,7 @@ border: 1px solid #a0a0a0</string>
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>330</y>
+      <y>380</y>
       <width>580</width>
       <height>580</height>
      </rect>
@@ -242,7 +242,7 @@ border: 1px solid #a0a0a0</string>
     <property name="geometry">
      <rect>
       <x>650</x>
-      <y>250</y>
+      <y>300</y>
       <width>91</width>
       <height>32</height>
      </rect>
@@ -260,7 +260,7 @@ border: 1px solid #a0a0a0</string>
     <property name="geometry">
      <rect>
       <x>650</x>
-      <y>280</y>
+      <y>330</y>
       <width>160</width>
       <height>28</height>
      </rect>
@@ -295,7 +295,7 @@ border: 1px solid #a0a0a0</string>
     <property name="geometry">
      <rect>
       <x>640</x>
-      <y>330</y>
+      <y>380</y>
       <width>580</width>
       <height>580</height>
      </rect>
@@ -318,8 +318,8 @@ border: 1px solid #a0a0a0</string>
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>290</y>
-      <width>111</width>
+      <y>340</y>
+      <width>201</width>
       <height>32</height>
      </rect>
     </property>
@@ -329,7 +329,25 @@ border: 1px solid #a0a0a0</string>
      </font>
     </property>
     <property name="text">
-     <string>Average GLCM</string>
+     <string>Input image in gray scale</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="show_average_glcm_button">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>280</y>
+      <width>201</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Show average GLCM</string>
     </property>
    </widget>
   </widget>
