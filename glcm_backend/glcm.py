@@ -163,6 +163,10 @@ class GLCMImage:
         return (array - min_value) / (max_value - min_value)
 
     @cached_property
+    def normalized_grayscale_image(self):
+        return self._normalize(self.grayscale_image, min_value=0, max_value=self.gray_levels-1)
+
+    @cached_property
     def normalized_average_glcm2d(self):
         return self._normalize(
             self.average_glcm2d, min_value=0, max_value=np.max(self.average_glcm2d)
@@ -204,8 +208,8 @@ class GLCMImage:
 
 
 # glcm_image = GLCMImage(
-#     grayscale_image=load_grayscale("../test.bmp"),
-#     gray_levels=32,
+#     grayscale_image=load_grayscale("../img_1.png"),
+#     gray_levels=8,
 #     block_size=30,
 #     average_glcm_from=[
 #         Direction(dx=1, dy=0),
@@ -214,3 +218,4 @@ class GLCMImage:
 #         Direction(dx=-1, dy=1),
 #     ],
 # )
+# to_image(glcm_image.normalized_grayscale_image).save("gs.png")
