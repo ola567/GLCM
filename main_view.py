@@ -259,7 +259,7 @@ class MainView(object):
         )
         if file_path:
             self.file_path_input.setPlainText(file_path)
-        self.load_grayscale()
+            self.load_grayscale()
 
     def load_grayscale(self):
         # Open the image file (supports JPG, PNG, BMP)
