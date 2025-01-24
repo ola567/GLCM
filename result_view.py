@@ -177,7 +177,12 @@ class ResultView(object):
         im = to_image(self.glcm_image.normalized_average_glcm2d)
         self.glcm_view_window = QtWidgets.QMainWindow()
         self.glcm_view_handler = GLCMView()
-        self.glcm_view_handler.setup(glcm_window=self.glcm_view_window, input_image=im)
+        self.glcm_view_handler.setup(
+            glcm_window=self.glcm_view_window,
+            input_image=im,
+            glcm_window_title="Average GLCM",
+            glcm_window_description=f"Average GLCM for whole image",
+        )
         self.glcm_view_window.show()
 
     def load_image_to_label(self, label, image_type: str):
@@ -228,7 +233,12 @@ class ResultView(object):
         im = to_image(self.glcm_image.normalized_average_glcm2d_for_block(x=x, y=y))
         self.glcm_view_window = QtWidgets.QMainWindow()
         self.glcm_view_handler = GLCMView()
-        self.glcm_view_handler.setup(glcm_window=self.glcm_view_window, input_image=im)
+        self.glcm_view_handler.setup(
+            glcm_window=self.glcm_view_window,
+            input_image=im,
+            glcm_window_title=f"Average GLCM",
+            glcm_window_description=f"Average GLCM for block ({x // self.block_size}, {y // self.block_size})",
+        )
         self.glcm_view_window.show()
 
     def retranslateUi(self, result_window):

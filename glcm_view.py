@@ -6,9 +6,17 @@ from PyQt5.QtWidgets import QLabel
 
 
 class GLCMView(object):
-    def setup(self, glcm_window, input_image):
+    def setup(
+        self,
+        glcm_window,
+        input_image,
+        glcm_window_title: str,
+        glcm_window_description: str,
+    ):
         # variables
         self.input_image = input_image
+        self.glcm_window_title = glcm_window_title
+        self.glcm_window_description = glcm_window_description
 
         glcm_window.resize(640, 678)
         self.centralwidget = QtWidgets.QWidget(glcm_window)
@@ -21,7 +29,7 @@ class GLCMView(object):
 
         # Label for GLCM text
         self.glcm_label = QtWidgets.QLabel(self.centralwidget)
-        self.glcm_label.setGeometry(QtCore.QRect(30, 30, 51, 32))
+        self.glcm_label.setGeometry(QtCore.QRect(30, 30, 581, 32))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.glcm_label.setFont(font)
@@ -36,8 +44,8 @@ class GLCMView(object):
 
     def retranslateUi(self, glcm_window):
         _translate = QtCore.QCoreApplication.translate
-        glcm_window.setWindowTitle(_translate("glcm_window", "GLCM"))
-        self.glcm_label.setText(_translate("glcm_window", "GLCM"))
+        glcm_window.setWindowTitle(_translate("glcm_window", self.glcm_window_title))
+        self.glcm_label.setText(_translate("glcm_window", self.glcm_window_description))
 
     def load_image(self):
         """
